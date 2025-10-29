@@ -1,14 +1,27 @@
 const TodoController = require('../../controllers/todo.controller')
 const TodoModel = require('../../models/todo.model')
+const httpMocks = require('node-mocks-http')
 
 TodoModel.create = jest.fn()
+
+let req, res, next
+beforeEach(() => {
+    req = httpMocks.createRequest()
+    res = httpMocks.createResponse()
+    next = null
+})
 
 describe('TodoController.createTodo', () => {
     it('should have a createTodo function', () => {
         expect(typeof TodoController.createTodo).toBe('function')
     })
-    it('should call TodoModel.create', () => {
-        TodoController.createTodo()
+    it('should call TodoModel.create', () => {     
+        TodoController.createTodo(req, res, next)
         expect(TodoModel.create).toHaveBeenCalled()
+    })
+    it('should return 201 response code', () => {     
+        TodoController.createTodo(req, res, next)
+        expect(res.statusCode).toBe(201)
+        expect(res._isEndCalled).toBeTruthy()
     })
 })
